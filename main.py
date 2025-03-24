@@ -39,6 +39,16 @@ class BSTree:
         self.post_order(root.right)
         print(root.key, end=" ")
 
+    def find_min(self, root):
+        while root.left:
+            root = root.left
+        return root.key
+
+    def find_max(self, root):
+        while root.right:
+            root = root.right
+        return root.key
+
 
 class AVLNode:
     def __init__(self, key):
@@ -72,6 +82,16 @@ class AVLTree:
             return self.left_rotate(root)
 
         return root
+
+    def find_min(self, root):
+        while root.left:
+            root = root.left
+        return root.key
+
+    def find_max(self, root):
+        while root.right:
+            root = root.right
+        return root.key
 
     def left_rotate(self, z):
         y = z.right
@@ -159,6 +179,7 @@ def main():
     action = ""
     print("Help         Show this message")
     print("Print        Print the tree usin In-order, Pre-order, Post-order")
+    print("FindMinMax   Find the minimum and maximum values in the tree")
     print("Remove       Remove elements of the tree")
     print("Delete       Delete whole tree")
     print("Export       Export the tree to tickzpicture")
@@ -171,6 +192,7 @@ def main():
         if action == "Help":
             print("Help         Show this message")
             print("Print        Print the tree usin In-order, Pre-order, Post-order")
+            print("FindMinMax   Find the minimum and maximum values in the tree")
             print("Remove       Remove elements of the tree")
             print("Delete       Delete whole tree")
             print("Export       Export the tree to tickzpicture")
@@ -185,6 +207,8 @@ def main():
             print("\nPost-order: ", end="")
             tree.post_order(root)
             print()
+        elif action == "FindMinMax":
+            print("Min: ", tree.find_min(root), "\nMax: ", tree.find_max(root))
 
 
 if __name__ == "__main__":
