@@ -46,17 +46,51 @@ class BSTree:
         self.post_order(root.right)
         print(root.key, end=" ")
         
+    #Rysowanie drzewa
+    def export(self,root,level=0):
+        indent = "    " * level  
+        if not root.left and not root.right:
+            return f"{indent}leaf {root.key}"
+        
+        l_str = self.export(root.left, level+1) if root.left else f"{indent}    child [missing]"
+        r_str = self.export(root.right, level+1) if root.right else f"{indent}    child [missing]"
+        
+        return f"{indent}node {root.key}\n{l_str} \n{r_str}"
+        
     #Znajdowanie minimalnej i maksymalnej wartości w drzewie
     def find_min(self, root):
         while root.left:
             root = root.left
-        return root.key
+        return root
 
     def find_max(self, root):
         while root.right:
             root = root.right
-        return root.key
+        return root
+    
+    # Usuwanie elementów
+    def remove(self, root, key):
+        if not root:
+            return root
+        
+        if key < root.key:
+            root.left = self.remove(root.left, key)
 
+        elif key > root.key:
+            root.right = self.remove(root.right, key)
+            
+        else:
+            if not root.left:
+                return root.right
+            elif not root.right:
+                return root.left
+            
+            temp = self.find_min(root.right)
+            root.key = temp.key
+            root.right = self.remove(root.right , temp.key)
+
+        return root
+    
 # Tworzenie drzewa AVL
 class AVLNode:
     def __init__(self, key):
@@ -97,12 +131,12 @@ class AVLTree:
     def find_min(self, root):
         while root.left:
             root = root.left
-        return root.key
+        return root
 
     def find_max(self, root):
         while root.right:
             root = root.right
-        return root.key
+        return root
     
     #Rotacje lewe i prawe
     def left_rotate(self, z):
@@ -135,6 +169,44 @@ class AVLTree:
             return 0
         return self.get_height(root.left) - self.get_height(root.right)
     
+    # Usuwanie elementu z drzewa i balansowanie drzewa
+    def remove(self, root, key):
+        if not root:
+            return root
+
+        if key < root.key:
+            root.left = self.remove(root.left, key)
+        elif key > root.key:
+            root.right = self.remove(root.right, key)
+        else:
+            if not root.left:
+                return root.right
+            elif not root.right:
+                return root.left
+
+            temp = self.find_min(root.right)
+            root.key = temp.key
+            root.right = self.remove(root.right, temp.key)
+
+        if not root:
+            return root
+
+        root.height = 1 + max(self.get_height(root.left), self.get_height(root.right))
+        balance = self.get_balance(root)
+
+        if balance > 1 and self.get_balance(root.left) >= 0:
+            return self.right_rotate(root)
+        if balance > 1 and self.get_balance(root.left) < 0:
+            root.left = self.left_rotate(root.left)
+            return self.right_rotate(root)
+        if balance < -1 and self.get_balance(root.right) <= 0:
+            return self.left_rotate(root)
+        if balance < -1 and self.get_balance(root.right) > 0:
+            root.right = self.right_rotate(root.right)
+            return self.left_rotate(root)
+
+        return root
+    
 #Wypisywanie drzewa
 
     #In-order
@@ -160,6 +232,17 @@ class AVLTree:
         self.post_order(root.left)
         self.post_order(root.right)
         print(root.key, end=" ")
+    
+    #Rysowanie drzewa
+    def export(self,root,level=0,type="ROOT"):
+        indent = "    " * level  
+        if not root.left and not root.right:
+            return f"{indent}{type} LEAF {root.key}"
+        
+        l_str = self.export(root.left, level+1,"LEFT") if root.left else f"{indent}    child [missing]"
+        r_str = self.export(root.right, level+1,"RIGHT") if root.right else f"{indent}    child [missing]"
+        
+        return f"{indent}{type} {root.key}\n{l_str} \n{r_str}"
 
 
 def main():
@@ -204,6 +287,7 @@ def main():
     Help         Show this message
     Print        Print the tree usin In-order, Pre-order, Post-order
     FindMinMax   Find the minimum and maximum values in the tree
+    Draw        Draw the tree
     Remove       Remove elements of the tree
     Delete       Delete whole tree
     Export       Export the tree to tickzpicture
@@ -231,9 +315,23 @@ def main():
             print()
             
         elif action == "FindMinMax":
-            print("Min: ", tree.find_min(root), "\nMax: ", tree.find_max(root))
+            print("Min: ", tree.find_min(root).key, "\nMax: ", tree.find_max(root).key)
+
+        elif action == "Remove":
+            print("to remove> ", end="")
+            values = list(map(int, input().split()))
+            for value in values:
+                root = tree.remove(root, value)
+            print(f"Removed {values} from the tree.")
+
+        elif action == "Draw":
+            print( f"\\{tree.export(root)}")
+
         elif action == "Exit":
             break
+
+        else:
+            print("Inalid Instruction\n")
 
 
 if __name__ == "__main__":
