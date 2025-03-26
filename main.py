@@ -102,6 +102,14 @@ class BSTree:
 
         return root
 
+    # Usuwanie całego drzewa
+    def remove_tree(self, root):
+        if not root:
+            return
+        self.remove_tree(root.left)
+        self.remove_tree(root.right)
+        del root
+
 
 # Tworzenie drzewa AVL
 class AVLNode:
