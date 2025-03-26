@@ -220,6 +220,14 @@ class AVLTree:
 
         return root
 
+    # Usuwanie całego drzewa
+    def remove_tree(self, root):
+        if not root:
+            return
+        self.remove_tree(root.left)
+        self.remove_tree(root.right)
+        del root
+
     # Wypisywanie drzewa
 
     # In-order
@@ -308,10 +316,9 @@ def main():
     Help         Show this message
     Print        Print the tree usin In-order, Pre-order, Post-order
     FindMinMax   Find the minimum and maximum values in the tree
-    Draw        Draw the tree
+    Draw         Draw the tree
     Remove       Remove elements of the tree
-    Delete       Delete whole tree
-    Export       Export the tree to tickzpicture
+    Delete All   Delete whole tree
     Rebalance    Rebalance the tree
     Exit         Exit the program (same as Ctrl+D)
     """
@@ -370,6 +377,12 @@ def main():
 
         elif action == "Draw":
             print(f"\\{tree.export(root)}")
+
+        elif action == "Delete All":
+            tree.remove_tree(root)
+            root = None
+            print("Tree has been deleted.")
+            print()
 
         elif action == "Exit":
             break
