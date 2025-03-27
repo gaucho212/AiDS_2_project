@@ -10,13 +10,12 @@ class BSTNode:
 
 
 # Implementacje komend w BST
-
-
 class BSTree:
+
     # Dodawanie elementu do drzewa
     def insert(self, root, key):
         if not root:
-            return BSTNode(key)
+            return BSTNode(key)       
         elif key < root.key:
             root.left = self.insert(root.left, key)
         else:
@@ -161,6 +160,7 @@ class BSTree:
 
 # Tworzenie drzewa AVL
 class AVLNode:
+    
     def __init__(self, key):
         self.key = key
         self.left = None
