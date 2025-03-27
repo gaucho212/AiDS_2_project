@@ -110,6 +110,54 @@ class BSTree:
         self.remove_tree(root.right)
         del root
 
+    # Równowazenie drzewa
+    def rebalance(self, root):
+        # Funkcja przeszkltalcajaca drzewo na splaszczone
+        def create_temp(root):
+            temp_root = BSTNode(0)
+            temp_root.right = root
+            tail = temp_root
+            current = root
+
+            while current:
+                if current.left:
+                    temp = current.left
+                    current.left = temp.right
+                    temp.right = current
+                    tail.right = temp
+                    current = temp
+                else:
+                    tail = current
+                    current = current.right
+            return temp_root.right
+        # Funkcja zmieniajaca drzewo splaszczone na zrownowazone drzewo
+        def change(root, count):
+            scanner = root
+            for _ in range(count):
+                if scanner.right:
+                    temp = scanner.right
+                    scanner.right = temp.right
+                    temp.right = scanner
+                    scanner = temp
+
+        # Funkcja liczaca liczbe wezlow
+        def count_nodes(root):
+            if not root:
+                return 0
+            return 1 + count_nodes(root.left) + count_nodes(root.right)
+        
+        # Glowna funkcja rebalansujaca
+        size = count_nodes(root)
+        root = create_temp(root)
+        full_size = 2 ** (size.bit_length() - 1)
+        change(root, size - full_size)
+
+        while full_size > 1:
+            full_size //= 2
+            change (root, full_size)
+        
+        return root
+
 
 # Tworzenie drzewa AVL
 class AVLNode:
@@ -297,8 +345,7 @@ def main():
             root = tree.insert(root, v)
             inserted.append(v)
 
-        print("Tree is completed")
-        print()
+        print("Tree is completed\n")
 
     elif "--tree" == sys.argv[1] and "BST" == sys.argv[2]:
         tree = BSTree()
@@ -313,12 +360,14 @@ def main():
             root = tree.insert(root, v)
             inserted.append(v)
 
-        print("Tree is completed")
-        print()
+        print("Tree is completed\n")
 
     else:
-        print("Wrong arguments. Please use the following format:")
-        print("python main.py --tree 'AVL/BST'")
+        message = """
+        Wrong arguments. Please use the following format:
+        python main.py --tree 'AVL/BST'
+        """
+        print(message)
 
     practice = """
     Help         Show this message
@@ -338,10 +387,10 @@ def main():
         print("action> ", end="")
         action = input()
 
-        if action == "Help":
+        if action == "Help" or action == "help":
             print(practice)
 
-        elif action == "Print":
+        elif action == "Print" or action == "print":
             print("In-order: ", end="")
             tree.in_order(root)
             print("\nPre-order: ", end="")
@@ -350,10 +399,13 @@ def main():
             tree.post_order(root)
             print()
 
-        elif action == "FindMinMax":
-            print("Min: ", tree.find_min(root).key, "\nMax: ", tree.find_max(root).key)
+        elif action == "FindMinMax" or action == "findminmax":
+            if not root:
+                print("Tree is empty.")
+            else:
+                print("Min: ", tree.find_min(root).key, "\nMax: ", tree.find_max(root).key)
 
-        elif action == "Remove":
+        elif action == "Remove" or action == "remove":
             print("to remove> ", end="")
             values = list(map(int, input().split()))
             removed = []
@@ -383,20 +435,25 @@ def main():
             if not removed and not not_found:
                 print("No values provided to remove.")
 
-        elif action == "Draw":
+        elif action == "Draw" or action == "draw":
             print(f"\\{tree.export(root)}")
 
-        elif action == "Delete All":
+        elif action == "Delete All" or action == "delete all":
             tree.remove_tree(root)
             root = None
-            print("Tree has been deleted.")
+            print("Tree has been deleted.\n")
+
+        elif action == "Rebalance" or action == "rebalance":
+            root = tree.rebalance(root)
+            print(f"Pre-Order: ", end="")
+            tree.pre_order(root)
             print()
 
-        elif action == "Exit":
+        elif action == "Exit" or action == "exit":
             break
 
         else:
-            print("Inalid Instruction\n")
+            print("Invalid Instruction\n")
 
 
 if __name__ == "__main__":
