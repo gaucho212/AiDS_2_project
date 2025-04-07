@@ -1,0 +1,7 @@
+AVL Insert 0.161182 seconds
+AVL FindMinMax 0.000216 seconds
+AVL Print(In_order) 0.019939 seconds
+BST Insert 15.087204 seconds
+BST FindMinMax 0.000610 seconds
+BST Print(In_order) 0.024489 seconds
+BST Rebalance 0.006695 seconds

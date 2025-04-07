@@ -1,4 +1,7 @@
 import sys
+import time
+
+sys.setrecursionlimit(10**6)  # Ustawienie limitu rekurencji na 1 milion
 
 
 # Tworzenie drzewa BST
@@ -15,7 +18,7 @@ class BSTree:
     # Dodawanie elementu do drzewa
     def insert(self, root, key):
         if not root:
-            return BSTNode(key)       
+            return BSTNode(key)
         elif key < root.key:
             root.left = self.insert(root.left, key)
         else:
@@ -129,6 +132,7 @@ class BSTree:
                     tail = current
                     current = current.right
             return temp_root.right
+
         # Funkcja zmieniajaca drzewo splaszczone na zrownowazone drzewo
         def change(root, count):
             scanner = root
@@ -144,7 +148,7 @@ class BSTree:
             if not root:
                 return 0
             return 1 + count_nodes(root.left) + count_nodes(root.right)
-        
+
         # Glowna funkcja rebalansujaca
         size = count_nodes(root)
         root = create_temp(root)
@@ -153,14 +157,14 @@ class BSTree:
 
         while full_size > 1:
             full_size //= 2
-            change (root, full_size)
-        
+            change(root, full_size)
+
         return root
 
 
 # Tworzenie drzewa AVL
 class AVLNode:
-    
+
     def __init__(self, key):
         self.key = key
         self.left = None
@@ -331,19 +335,30 @@ class AVLTree:
 
 
 def main():
+    def log_action(tree_type, action_type, execution_time):
+        with open("tree_actions.log", "a") as log_file:
+            log_file.write(f"{tree_type} {action_type} {execution_time:.6f} seconds\n")
 
     if "--tree" == sys.argv[1] and "AVL" == sys.argv[2]:
         tree = AVLTree()
         root = None
         inserted = []
+        tree_type = "AVL"
 
-        print("Enter values to insert into the AVL tree:")
-        s = sys.stdin.read()
-        value = list(map(int, s.split()))
-        print("insert>", " ".join(map(str, value)))
+        if sys.argv[3] == "test":
+            value = [x for x in range(1, 10000)]
+
+        else:
+            print("Enter values to insert into the AVL tree:")
+            s = sys.stdin.read()
+            value = list(map(int, s.split()))
+            print("insert>", " ".join(map(str, value)))
+        start_time = time.time()
         for v in value:
             root = tree.insert(root, v)
             inserted.append(v)
+        execution_time = time.time() - start_time
+        log_action(tree_type, "Insert", execution_time)
 
         print("Tree is completed\n")
 
@@ -351,14 +366,22 @@ def main():
         tree = BSTree()
         root = None
         inserted = []
+        tree_type = "BST"
 
-        print("Enter values to insert into the BST tree:")
-        s = sys.stdin.read()
-        value = list(map(int, s.split()))
-        print("insert>", " ".join(map(str, value)))
+        if sys.argv[3] == "test":
+            value = [x for x in range(1, 10000)]
+
+        else:
+            print("Enter values to insert into the BST tree:")
+            s = sys.stdin.read()
+            value = list(map(int, s.split()))
+            print("insert>", " ".join(map(str, value)))
+        start_time = time.time()
         for v in value:
             root = tree.insert(root, v)
             inserted.append(v)
+        execution_time = time.time() - start_time
+        log_action(tree_type, "Insert", execution_time)
 
         print("Tree is completed\n")
 
@@ -391,19 +414,28 @@ def main():
             print(practice)
 
         elif action == "Print" or action == "print":
+            start_time = time.time()
             print("In-order: ", end="")
             tree.in_order(root)
+            execution_time = time.time() - start_time
             print("\nPre-order: ", end="")
             tree.pre_order(root)
             print("\nPost-order: ", end="")
             tree.post_order(root)
             print()
 
+            log_action(tree_type, "Print(In_order)", execution_time)
+
         elif action == "FindMinMax" or action == "findminmax":
+            start_time = time.time()
             if not root:
                 print("Tree is empty.")
             else:
-                print("Min: ", tree.find_min(root).key, "\nMax: ", tree.find_max(root).key)
+                print(
+                    "Min: ", tree.find_min(root).key, "\nMax: ", tree.find_max(root).key
+                )
+            execution_time = time.time() - start_time
+            log_action(tree_type, "FindMinMax", execution_time)
 
         elif action == "Remove" or action == "remove":
             print("to remove> ", end="")
@@ -421,12 +453,14 @@ def main():
                     return find_key(root.left, key)
                 return find_key(root.right, key)
 
+            start_time = time.time()
             for value in values:
                 if find_key(root, value):
                     root = tree.remove(root, value)
                     removed.append(value)
                 else:
                     not_found.append(value)
+            execution_time = time.time() - start_time
 
             if removed:
                 print(f"Removed {removed} from the tree.")
@@ -434,20 +468,33 @@ def main():
                 print(f"Values {not_found} not found in the tree.")
             if not removed and not not_found:
                 print("No values provided to remove.")
+            log_action(tree_type, "Remove", execution_time)
 
         elif action == "Draw" or action == "draw":
+            start_time = time.time()
             print(f"\\{tree.export(root)}")
+            execution_time = time.time() - start_time
+            log_action(tree_type, "Draw", execution_time)
 
         elif action == "Delete All" or action == "delete all":
+            start_time = time.time()
             tree.remove_tree(root)
             root = None
+            execution_time = time.time() - start_time
             print("Tree has been deleted.\n")
+            log_action(tree_type, "Delete All", execution_time)
 
         elif action == "Rebalance" or action == "rebalance":
+            if tree_type == "AVL":
+                print("Tree is already balanced.")
+                continue
+            start_time = time.time()
             root = tree.rebalance(root)
+            execution_time = time.time() - start_time
             print(f"Pre-Order: ", end="")
             tree.pre_order(root)
             print()
+            log_action(tree_type, "Rebalance", execution_time)
 
         elif action == "Exit" or action == "exit":
             break
