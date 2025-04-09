@@ -1,0 +1,173 @@
+\documentclass{article}
+
+\newcommand\reportsubject  {Laboratoria Algorytmów i Struktur Danych}
+\newcommand\reporttitle    {Drzewa przeszukiwań binarnych BST i drzewa samobalansujące}
+\newcommand\reportsubtitle {Sprawozdanie nr 2}
+\newcommand\grouptutor     {Dominik Piotr Witczak}
+\newcommand\teamduo		   {Marcin Jakubowski(164108), Adam Woźiński(164119)}
+\input{Preamble} % Loads in the preamble 
+\input{Settings} % Loads in the preamble 
+
+\begin{document}
+\begin{titlepage}
+	
+	\begin{tikzpicture}[remember picture,overlay]
+		% Default apex angle 30 degrees
+		\node(left-triagle)[isosceles triangle,
+		isosceles triangle apex angle=90,
+		fill=Light-Gray,
+		minimum size =0.6\textheight] (T.west) at (current page.north west){};
+		
+		\node(bottom-triagle)[isosceles triangle, name=bottomtriangle,
+		isosceles triangle apex angle=90, rotate=90,
+		fill=Light-Gray,
+		minimum height=40.05cm] () at ([xshift=-9cm]current page.south east){};
+		
+		\node(bottom-rectangle)[rectangle,
+		fill=Light-Gray, minimum height=47cm, minimum width=18cm] () at (current page.south east)
+		{};
+		
+		\node[inner sep=0pt] (logo) at ([xshift=2.5cm, yshift=-2.5cm]current page.north west)
+		{\includegraphics[width= 0.25\textwidth]{Figures/PP-PUT-LOGO.png}};
+		
+		\node[text width = 0.8\textwidth](subject) at (16,-4){\sffamily\Large \reportsubject};
+		\node[text width = 0.8\textwidth, yshift = 0.75cm, xshift= -1.15cm, below = of subject](subtitle){\textcolor{PUT-Blue}{\sffamily\Large \reportsubtitle}};
+		\node[text width = 0.8\textwidth, yshift = 0.75cm, xshift= -1.15cm, below = of subtitle](title) {\textcolor{PUT-Blue}{\sffamily\Huge\reporttitle}};
+		\node[text width = 0.8\textwidth, yshift = 0.75cm, xshift= -1.25cm, below = of title](tutor){\sffamily\Large Prowadzący: \putbf{\grouptutor} };
+		\node[text width = 0.8\textwidth, yshift = 0.75cm, xshift= -1.25cm, below = of tutor](names){\sffamily\normalsize Autorzy: \putbf{\teamduo} };
+		
+		
+		
+		
+		\node[inner sep=0pt, anchor=west] (logo2) at ([xshift=1.2cm, yshift=2.5cm]current page.south west)
+		{\includegraphics[width= 0.6\textwidth]{Figures/PP-PUT-WORD}};
+		
+	\end{tikzpicture}
+	
+\end{titlepage}
+\newpage
+	\section{Wprowadzenie}
+    
+Celem projektu było zaimplementowanie dwóch struktur danych: drzewa binarnego poszukiwań (BST - Binary Search Tree) oraz drzewa AVL (AVL Tree), a następnie porównanie ich działania w różnych sytuacjach. Drzewa te są podstawowymi strukturami danych w informatyce, wykorzystywanymi w wielu dziedzinach, takich jak bazy danych, systemy plików czy kompilatory.
+
+Drzewo BST pozwala na przechowywanie danych w uporządkowany sposób, co umożliwia szybkie wyszukiwanie, wstawianie i usuwanie elementów. Jednak w przypadku niekorzystnych danych wejściowych, np. posortowanych, drzewo może stać się niezrównoważone, co znacząco obniża jego wydajność.
+
+Drzewo AVL to ulepszona wersja drzewa BST, która automatycznie utrzymuje balans. Dzięki temu wysokość drzewa pozostaje logarytmiczna względem liczby elementów, co zapewnia wysoką wydajność operacji niezależnie od danych wejściowych. Balansowanie odbywa się za pomocą rotacji (lewych i prawych), które są wykonywane, gdy różnica wysokości poddrzew przekracza dopuszczalny limit.
+
+W ramach projektu zaimplementowano podstawowe operacje na drzewach, takie jak wstawianie, usuwanie czy wyszukiwanie wartości minimalnej i maksymalnej. Dodatkowo dodano funkcje balansowania drzewa BST oraz możliwość wizualizacji struktury drzewa. Program umożliwia także interakcję z drzewami za pomocą prostego interfejsu tekstowego, co pozwala na testowanie i analizę ich działania.
+	
+	\section{Struktura drzewa}
+	
+	\begin{figure} [H]
+		\noindent\resizebox{\textwidth}{!}{
+			\centering
+			\begin{subfigure}{0.4\textwidth}
+				\centering
+				\input{Figures/Tex/avl-creation} 
+				\caption{Tworzenie drzewa AVL}
+				\label{fig:avl:create}
+			\end{subfigure}
+			\hfill
+			\begin{subfigure}{0.4\textwidth}
+				\centering
+				\input{Figures/Tex/bst-creation} 
+				\caption{Tworzenie drzewa BST}
+				\label{fig:bst:create}
+			\end{subfigure}
+		}
+	\end{figure}
+\newpage
+    \section{Tworzenie drzew}
+    Proces rozpoczyna się od wprowadzenia danych za pomocą heredoc. Następnie użytkownikowi prezentowane jest główne menu, które umożliwia wybór dostępnych opcji związanych z dalszym zarządzaniem drzewami.
+
+    \begin{figure} [H]
+		\noindent\resizebox{\textwidth}{!}{
+			\centering
+            \input{Figures/Tex/program}
+            }
+    \end{figure}
+	
+	
+	\section{Porównywanie czasów wykonywania operacji}
+
+	%Wykresy, obrazy itd, warto opakowywać w `figure`, dzięki czemu można dodać Caption\Opis do figury, jak i `label` dzięki któremu później można odwoływać się do figur np. ``
+	\begin{figure}[H]
+		\centering
+		\label{fig:enter-label}
+		%Tworzę "pojemnik" na wykres `pgfplots` tak żeby automatycznie wyskalował mi wygenerowany wykres na szerokość strony. 
+		\noindent\resizebox{\textwidth}{!}{
+			\begin{tikzpicture}
+				\begin{axis}[%
+					name=plotA, anchor=left of south west,
+					title={InOrder}, 
+					xlabel={Rozmiar instancji}, ylabel={Czas(s)}, 
+					legend pos=north west,
+					xmode = log, log basis x={2},
+					every axis plot post/.style={very thick},
+					/tikz/plot label/.style={black, anchor=west}
+					]
+					\addplot[red, dashed, smooth] table[x=InputSize,y=Time,col sep=comma] {BST_InOrder.txt};
+                    \addlegendentry{BST}
+					\addplot[color=blue, dashed, smooth] table[x=InputSize,y=Time,col sep=comma] {AVL_InOrder.txt};
+                    \addlegendentry{AVL}
+					
+				\end{axis}
+				\begin{axis}[%
+					title={Insert}, 
+					name=plotB, at=(plotA.right of south east), 
+					anchor=left of south west,
+					xlabel={Rozmiar instancji}, ylabel={Czas(s)}, 
+					legend pos=north west,
+					xmode = log, log basis x={2}, %Ustawiam oś x na logarytmiczną (log2)
+					every axis plot post/.style={very thick},
+					/tikz/plot label/.style={black, anchor=west}
+					]
+					\addplot[red, dashed, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {BST_Insert.txt};
+                    \addlegendentry{BST}
+					\addplot[color=blue, dashed, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {AVL_Insert.txt};
+                    \addlegendentry{AVL}
+				\end{axis}
+				\begin{axis}[%
+					title={MinMax}, 
+					name=plotD, at=(plotB.below south west), 
+					anchor=above north west,
+					xlabel={Rozmiar instancji}, ylabel={Czas(s)}, 
+					legend pos=north west,
+					xmode = log, log basis x={2},
+					every axis plot post/.style={very thick},
+					/tikz/plot label/.style={black, anchor=west}
+					]
+					\addplot[red, dashed, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {BST_MinMax.txt};
+                    \addlegendentry{BST}
+					\addplot[color=blue, dashed, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {AVL_MinMax.txt};
+                    \addlegendentry{AVL}
+				\end{axis}
+				\begin{axis}[%
+					title={Rebalnce},
+					name=plotC, at=(plotD.left of south west), 
+					anchor=right of south east,
+					xlabel={Rozmiar instancji}, ylabel={Czas(s)}, 
+					legend pos=north west,
+					xmode = log, log basis x={2},
+					every axis plot post/.style={very thick},
+					/tikz/plot label/.style={black, anchor=west}
+					]
+					\addplot[red, dashed, smooth]
+                    table[x=InputSize,y=Time,meta=Algorithm,col sep=comma]{BST_Rebalace.txt};
+                    \addlegendentry{BST}
+				\end{axis}
+			\end{tikzpicture}
+		}
+	\end{figure}
+\newpage
+	\section{Wnioski}
+	
+Drzewa AVL są szybsze od drzew BST w większości operacji, szczególnie przy dużych zbiorach danych. AVL utrzymuje równowagę drzewa, co pozwala na lepszą wydajność, podczas gdy BST może się "wydłużać", co spowalnia działanie.
+
+Wstawianie w AVL wymaga dodatkowego czasu na utrzymanie równowagi, ale przy większych danych AVL działa szybciej niż BST. Automatyczne równoważenie w AVL pozwala na lepszą wydajność w dłuższej perspektywie, czego BST nie oferuje.
+
+Operacje takie jak przejście drzewa w porządku czy znajdowanie wartości minimalnej i maksymalnej są szybsze w AVL dzięki mniejszej głębokości drzewa. W BST te operacje mogą być wolniejsze, jeśli drzewo jest niezrównoważone.
+
+Im większy zbiór danych, tym bardziej AVL przewyższa BST. AVL jest lepszym wyborem do dużych zbiorów danych, gdzie kluczowa jest wydajność, natomiast BST sprawdzi się w prostszych przypadkach.
+	
+\end{document}

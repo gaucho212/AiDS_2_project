@@ -5,3 +5,4 @@ BST Insert 15.087204 seconds
 BST FindMinMax 0.000610 seconds
 BST Print(In_order) 0.024489 seconds
 BST Rebalance 0.006695 seconds
+BST Insert 0.000012 seconds

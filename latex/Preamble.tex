@@ -1,0 +1,66 @@
+% Useful packages, sorted so packages of similar functionality are grouped together. Not all are essential to make the document work, however an effort was made to make this list as minimalistic as possible. Feel free to add your own!
+
+% Essential for making this template work are graphicx, float, tabularx, tabu, tocbibind, titlesec, fancyhdr, xcolor and tikz. 
+
+% Not essential, but you will have to debug the document a little bit when removing them are amsmath, amsthm, amssymb, amsfonts, caption, subcaption, appendix, enumitem, hyperref and cleveref.
+
+% inputenc, lipsum, booktabs, geometry and microtype are not required, but nice to have.
+
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amsthm, amssymb, amsfonts} % Nicer mathematical typesetting
+\usepackage{multicol}
+\usepackage{lipsum} % Creates dummy text lorem ipsum to showcase typsetting 
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{amsmath}
+\usepackage{graphicx} % Allows the use of \begin{figure} and \includegraphics
+\usepackage{float} % Useful for specifying the location of a figure ([H] for ex.)
+\usepackage{caption} % Adds additional customization for (figure) captions
+\usepackage{subcaption} % Needed to create sub-figures
+\usepackage{minted}
+\usepackage[nottoc,numbib]{tocbibind} % Automatically adds bibliography to ToC
+\usepackage{titlesec} % Used to create custom section and subsection titles
+\usepackage{titletoc} % Used to create a custom ToC
+\usepackage{appendix} % Any chapter after \appendix is given a letter as index
+\usepackage{fancyhdr} % Adds customization for headers and footers
+\usepackage{hyperref} % Allows links and makes references and the ToC clickable
+\usepackage[noabbrev, capitalise]{cleveref} % Easier referencing using \cref{<label>} instead of \ref{}
+\usepackage{comment}
+
+\usepackage{xcolor} % Predefines additional colors and allows user defined colors
+\usepackage{tikz} % Useful for drawing images, used for creating the frontpage
+\usetikzlibrary{positioning} % Additional library for relative positioning 
+\usetikzlibrary{calc} % Additional library for calculating within tikz
+\usetikzlibrary{shapes.geometric}
+\usetikzlibrary{decorations.text}
+
+% Defines a command used by tikz to calculate some coordinates for the front-page
+\makeatletter
+\newcommand{\gettikzxy}[3]{%
+  \tikz@scan@one@point\pgfutil@firstofone#1\relax
+  \edef#2{\the\pgf@x}%
+  \edef#3{\the\pgf@y}%
+}
+\makeatother
+
+% For terminal
+\usepackage{fancyvrb,minted,tcolorbox}
+\tcbuselibrary{skins,breakable,breakable}
+\tcbuselibrary{minted}
+
+% From previous
+
+%Tworzenie wykresów bezpośrednio w LaTeXu
+\usepackage{pgfplots}
+%Pozwala dodać opcję H dlo figur, dzięki czemu mamy absolutną kontrolę gdzie się mają pojawić
+\usepackage{float}
+%Ustawianie marginesu 1 cal lub 0.5 cala to najlepsza opcja. Standardowe 1.5 cala nadaje się dla książek ale dla sprawozdań już mniej
+\usepackage[margin=1in]{geometry}
+\pgfplotsset{
+	width=8cm, height=7cm, ymin=0, xmin=2047, xmax=32768, grid=both, %wymiary osi
+	xticklabel style={rotate=45, anchor=near xticklabel},  %liczby na osi X pod kątem 45*
+	x label style={at={(axis description cs:0.5,-0.03)}}, %legenda osi X wyśrodkowana, lekko obniżona
+	y label style={at={(axis description cs:-0.1,0.4)}}
+}

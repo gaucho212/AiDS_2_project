@@ -1,0 +1,24 @@
+\begin{figure}[H]
+	\centering
+	\label{fig:enter-label}
+	%Tworzę "pojemnik" na wykres `pgfplots` tak żeby automatycznie wyskalował mi wygenerowany wykres na szerokość strony. 
+	\noindent\resizebox{\textwidth}{!}{
+		\begin{tikzpicture}[scale=0.5]
+			\begin{axis}[
+				font=\scriptsize,
+				name=plotA, anchor=left of south west,
+				title={Złożoność Obliczeniowa Algorytmy Szybkie (decreasing array)}, 
+				xlabel={Rozmiar instancji}, ylabel={Czas(ms)}, 
+				legend pos=north west,
+				legend style={font=\scriptsize, row sep=-2pt},
+				xmode = log, log basis x={2},
+				every axis plot post/.style={red!75!black, very thick},
+				/tikz/plot label/.style={black, anchor=west}
+				]
+				\addplot[red, dashed, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {insertion_sort_decreasing_array.txt};
+				\addplot[red, dotted, smooth] table[x=InputSize,y=Time,meta=Algorithm,col sep=comma] {quick_sort_left_pivot_decreasing_array.txt};
+				\legend{Insertion Sort, Quick Sort left}
+			\end{axis}
+		\end{tikzpicture}
+	}
+\end{figure}

@@ -1,0 +1,28 @@
+\input{Settings/TcblistingMintedTerminal}
+\input{Settings/TikzTreeStyle}
+
+\begin{TcblistingMintedTerminal}
+# Tworzenie drzewa BST
+class BSTNode:
+def __init__(self, key):
+self.key = key
+self.left = None
+self.right = None
+
+\end{TcblistingMintedTerminal}
+
+\begin{TikzTreeStyle}
+\node {2}
+child
+{ node {10} {
+    child { node {13} } }
+}
+child 
+{ node {12}
+    child { node {10} }
+    child { node {13}
+        child {node {11}}
+        } 
+};
+\path[draw=none] (0,-3) -- (0,4mm); %Set tikzpicture height to 34mm
+\end{TikzTreeStyle}

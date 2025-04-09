@@ -1,0 +1,25 @@
+\input{Settings/TcblistingMintedTerminal}
+\input{Settings/TikzTreeStyle}
+
+\begin{TcblistingMintedTerminal}
+# Tworzenie drzewa AVL
+class AVLNode:
+def __init__(self, key):
+self.key = key
+self.left = None
+self.right = None
+self.height = 1
+\end{TcblistingMintedTerminal}
+
+\begin{TikzTreeStyle}
+  \node {13}
+    child {node {10}
+      child {node {2}}
+      child {node {11}}
+    }
+    child {node {15}
+      child {node {14}}
+      child {node {16}}
+    };
+    \path[draw=none] (0,-2) -- (0,14mm); %Set tikzpicture height to 34mm
+\end{TikzTreeStyle}
