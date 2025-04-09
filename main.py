@@ -345,7 +345,7 @@ def main():
         inserted = []
         tree_type = "AVL"
 
-        if sys.argv[3] == "test":
+        if len(sys.argv) > 3 and sys.argv[3] == "test":
             value = [x for x in range(1, 10000)]
 
         else:
@@ -368,7 +368,7 @@ def main():
         inserted = []
         tree_type = "BST"
 
-        if sys.argv[3] == "test":
+        if len(sys.argv) > 3 and sys.argv[3] == "test":
             value = [x for x in range(1, 10000)]
 
         else:
