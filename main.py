@@ -3,30 +3,7 @@ import time
 
 sys.setrecursionlimit(10**6)  # Ustawienie limitu rekurencji na 1 milion
 
-
-# Tworzenie drzewa BST
-class BSTNode:
-    def __init__(self, key):
-        self.key = key
-        self.left = None
-        self.right = None
-
-
-# Implementacje komend w BST
-class BSTree:
-
-    # Dodawanie elementu do drzewa
-    def insert(self, root, key):
-        if not root:
-            return BSTNode(key)
-        elif key < root.key:
-            root.left = self.insert(root.left, key)
-        else:
-            root.right = self.insert(root.right, key)
-        return root
-
-    # Wypisawywanie drzewa
-
+class Tree:
     # In-order
     def in_order(self, root):
         if not root:
@@ -50,25 +27,14 @@ class BSTree:
         self.post_order(root.left)
         self.post_order(root.right)
         print(root.key, end=" ")
-
-    # Rysowanie drzewa
-    def export(self, root, level=0):
-        indent = "    " * level
-        if not root.left and not root.right:
-            return f"{indent}leaf {root.key}"
-
-        l_str = (
-            self.export(root.left, level + 1)
-            if root.left
-            else f"{indent}    child [missing]"
-        )
-        r_str = (
-            self.export(root.right, level + 1)
-            if root.right
-            else f"{indent}    child [missing]"
-        )
-
-        return f"{indent}node {root.key}\n{l_str} \n{r_str}"
+    
+    # Usuwanie całego drzewa
+    def remove_tree(self, root):
+        if not root:
+            return
+        self.remove_tree(root.left)
+        self.remove_tree(root.right)
+        del root
 
     # Znajdowanie minimalnej i maksymalnej wartości w drzewie
     def find_min(self, root):
@@ -79,6 +45,47 @@ class BSTree:
     def find_max(self, root):
         while root.right:
             root = root.right
+        return root
+    
+    # Rysowanie drzewa
+    def export(self, root, level=0, type="ROOT"):
+        indent = "    " * level
+        if not root.left and not root.right:
+            return f"{indent}{type} LEAF {root.key}"
+
+        l_str = (
+            self.export(root.left, level + 1, "LEFT")
+            if root.left
+            else f"{indent}    child [missing]"
+        )
+        r_str = (
+            self.export(root.right, level + 1, "RIGHT")
+            if root.right
+            else f"{indent}    child [missing]"
+        )
+
+        return f"{indent}{type} {root.key}\n{l_str} \n{r_str}"
+
+# Tworzenie drzewa BST
+class BSTNode:
+    def __init__(self, key):
+        self.key = key
+        self.left = None
+        self.right = None
+
+
+# Implementacje komend w BST
+class BSTree(Tree):
+    pass
+
+    # Dodawanie elementu do drzewa
+    def insert(self, root, key):
+        if not root:
+            return BSTNode(key)
+        elif key < root.key:
+            root.left = self.insert(root.left, key)
+        else:
+            root.right = self.insert(root.right, key)
         return root
 
     # Usuwanie elementów
@@ -104,67 +111,64 @@ class BSTree:
 
         return root
 
-    # Usuwanie całego drzewa
-    def remove_tree(self, root):
-        if not root:
-            return
-        self.remove_tree(root.left)
-        self.remove_tree(root.right)
-        del root
+    
+    # Przekształca drzewo w kregosłup
+    def create_temp(self, root):
+        temp_root = BSTNode(0)
+        temp_root.right = root
+        current = temp_root
 
-    # Równowazenie drzewa
+        while current.right:
+            if current.right.left:
+                node = current.right
+                current.right = node.left
+                node.left = current.right.right
+                current.right.right = node
+            else:
+                current = current.right
+
+        return temp_root.right
+    
+    # Wykonuje rotacje w lewo
+    def change(self, root, count):
+        dummy = BSTNode(0)
+        dummy.right = root
+        current = dummy
+
+        for _ in range(count):
+            if current.right and current.right.right:
+                node = current.right
+                current.right = node.right
+                node.right = current.right.left
+                current.right.left = node
+            current = current.right
+
+        return dummy.right
+    
+    # Rownoważenie drzewa przy pomocy DSW
     def rebalance(self, root):
-        # Funkcja przeszkltalcajaca drzewo na splaszczone
-        def create_temp(root):
-            temp_root = BSTNode(0)
-            temp_root.right = root
-            tail = temp_root
-            current = root
+        if not root:
+            return None
 
-            while current:
-                if current.left:
-                    temp = current.left
-                    current.left = temp.right
-                    temp.right = current
-                    tail.right = temp
-                    current = temp
-                else:
-                    tail = current
-                    current = current.right
-            return temp_root.right
-
-        # Funkcja zmieniajaca drzewo splaszczone na zrownowazone drzewo
-        def change(root, count):
-            scanner = root
-            for _ in range(count):
-                if scanner.right:
-                    temp = scanner.right
-                    scanner.right = temp.right
-                    temp.right = scanner
-                    scanner = temp
-
-        # Funkcja liczaca liczbe wezlow
-        def count_nodes(root):
-            if not root:
+        root = self.create_temp(root)
+        
+        def count_nodes(node):
+            if not node:
                 return 0
-            return 1 + count_nodes(root.left) + count_nodes(root.right)
+            return 1 + count_nodes(node.left) + count_nodes(node.right)
 
-        # Glowna funkcja rebalansujaca
-        size = count_nodes(root)
-        root = create_temp(root)
-        full_size = 2 ** (size.bit_length() - 1)
-        change(root, size - full_size)
+        n = count_nodes(root)
+        m = 2 ** (n.bit_length() - 1) - 1
+        root = self.change(root, n - m)
 
-        while full_size > 1:
-            full_size //= 2
-            change(root, full_size)
+        while m > 1:
+            m //= 2
+            root = self.change(root, m)
 
         return root
 
-
 # Tworzenie drzewa AVL
 class AVLNode:
-
     def __init__(self, key):
         self.key = key
         self.left = None
@@ -173,8 +177,8 @@ class AVLNode:
 
 
 # Implementacje komend w AVL
-class AVLTree:
-
+class AVLTree(Tree):
+    pass
     # Dodawanie elementow do drzewa i balansowanie drzewa
     def insert(self, root, key):
         if not root:
@@ -198,17 +202,6 @@ class AVLTree:
             root.right = self.right_rotate(root.right)
             return self.left_rotate(root)
 
-        return root
-
-    # Znajdowanie minimalnej i maksymalnej wartości w drzewie
-    def find_min(self, root):
-        while root.left:
-            root = root.left
-        return root
-
-    def find_max(self, root):
-        while root.right:
-            root = root.right
         return root
 
     # Rotacje lewe i prawe
@@ -280,60 +273,6 @@ class AVLTree:
 
         return root
 
-    # Usuwanie całego drzewa
-    def remove_tree(self, root):
-        if not root:
-            return
-        self.remove_tree(root.left)
-        self.remove_tree(root.right)
-        del root
-
-    # Wypisywanie drzewa
-
-    # In-order
-    def in_order(self, root):
-        if not root:
-            return
-        self.in_order(root.left)
-        print(root.key, end=" ")
-        self.in_order(root.right)
-
-    # Pre-order
-    def pre_order(self, root):
-        if not root:
-            return
-        print(root.key, end=" ")
-        self.pre_order(root.left)
-        self.pre_order(root.right)
-
-    # Post-order
-    def post_order(self, root):
-        if not root:
-            return
-        self.post_order(root.left)
-        self.post_order(root.right)
-        print(root.key, end=" ")
-
-    # Rysowanie drzewa
-    def export(self, root, level=0, type="ROOT"):
-        indent = "    " * level
-        if not root.left and not root.right:
-            return f"{indent}{type} LEAF {root.key}"
-
-        l_str = (
-            self.export(root.left, level + 1, "LEFT")
-            if root.left
-            else f"{indent}    child [missing]"
-        )
-        r_str = (
-            self.export(root.right, level + 1, "RIGHT")
-            if root.right
-            else f"{indent}    child [missing]"
-        )
-
-        return f"{indent}{type} {root.key}\n{l_str} \n{r_str}"
-
-
 def main():
     def log_action(tree_type, action_type, execution_time):
         with open("tree_actions.log", "a") as log_file:
@@ -345,7 +284,7 @@ def main():
         inserted = []
         tree_type = "AVL"
 
-        if len(sys.argv) > 3 and sys.argv[3] == "test":
+        if len(sys.argv)>3 and sys.argv[3] == "test":
             value = [x for x in range(1, 10000)]
 
         else:
@@ -368,7 +307,7 @@ def main():
         inserted = []
         tree_type = "BST"
 
-        if len(sys.argv) > 3 and sys.argv[3] == "test":
+        if len(sys.argv)>3 and sys.argv[3] == "test":
             value = [x for x in range(1, 10000)]
 
         else:
